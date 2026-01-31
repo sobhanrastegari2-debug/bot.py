@@ -7,7 +7,6 @@ ADMIN_ID = 1428411847
 bot = telebot.TeleBot(TOKEN)
 user_state = {}
 
-
 def main_menu():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
     kb.add("🛒 خرید VPN")
@@ -15,13 +14,11 @@ def main_menu():
     kb.add("📘 آموزش")
     return kb
 
-
 def vpn_plans_kb():
     kb = types.InlineKeyboardMarkup()
     kb.add(types.InlineKeyboardButton("✅ ادامه خرید", callback_data="vpn_continue"))
     kb.add(types.InlineKeyboardButton("🔙 برگشت", callback_data="back_main"))
     return kb
-
 
 def vpn_choose_plan_kb():
     kb = types.InlineKeyboardMarkup()
@@ -31,21 +28,18 @@ def vpn_choose_plan_kb():
     kb.add(types.InlineKeyboardButton("🔙 برگشت", callback_data="back_main"))
     return kb
 
-
 def cancel_kb():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
     kb.add("❌ لغو")
     return kb
-
 
 @bot.message_handler(commands=["start"])
 def start(message):
     bot.send_message(
         message.chat.id,
         "سلام 👋\nبه ربات ثبت سفارش خوش اومدی ✅\nاز منو یکی رو انتخاب کن:",
-        reply_markup=main_menu(),
+        reply_markup=main_menu()
     )
-
 
 @bot.message_handler(func=lambda m: m.text == "🛒 خرید VPN")
 def buy_vpn(message):
@@ -58,7 +52,6 @@ def buy_vpn(message):
     bot.send_message(message.chat.id, text, reply_markup=types.ReplyKeyboardRemove())
     bot.send_message(message.chat.id, "ادامه؟", reply_markup=vpn_plans_kb())
 
-
 @bot.message_handler(func=lambda m: m.text == "💳 روش پرداخت")
 def payment(message):
     text = (
@@ -68,7 +61,6 @@ def payment(message):
         "📌 بعد از پرداخت، رسید را در بخش پشتیبانی ارسال کنید."
     )
     bot.send_message(message.chat.id, text, reply_markup=main_menu())
-
 
 @bot.message_handler(func=lambda m: m.text == "📘 آموزش")
 def tutorial(message):
@@ -82,22 +74,19 @@ def tutorial(message):
     )
     bot.send_message(message.chat.id, text, reply_markup=main_menu())
 
-
 @bot.message_handler(func=lambda m: m.text == "🧑‍💻 پشتیبانی")
 def support(message):
     user_state[message.chat.id] = {"mode": "support"}
     bot.send_message(
         message.chat.id,
         "🧑‍💻 پیام پشتیبانی خود را بنویسید (متن/عکس) 👇\nبرای لغو: ❌ لغو",
-        reply_markup=cancel_kb(),
+        reply_markup=cancel_kb()
     )
-
 
 @bot.message_handler(func=lambda m: m.text == "❌ لغو")
 def cancel(message):
     user_state.pop(message.chat.id, None)
     bot.send_message(message.chat.id, "لغو شد ✅", reply_markup=main_menu())
-
 
 @bot.callback_query_handler(func=lambda call: True)
 def callbacks(call):
@@ -127,10 +116,8 @@ def callbacks(call):
             "2) یوزرنیم تلگرام (اگر داری)\n"
             "3) توضیحات (مثلاً مدل گوشی/کشور/هرچی لازم می‌دونی)\n\n"
             "برای لغو: ❌ لغو",
-            reply_markup=cancel_kb(),
+            reply_markup=cancel_kb()
         )
-        return
-
 
 @bot.message_handler(content_types=["text", "photo"])
 def handle_all(message):
@@ -149,7 +136,7 @@ def handle_all(message):
                 f"📩 پیام پشتیبانی جدید\n\n"
                 f"👤 کاربر: {message.from_user.first_name}\n"
                 f"🆔 ID: {chat_id}\n"
-                f"📌 متن:\n{message.text}",
+                f"📌 متن:\n{message.text}"
             )
         else:
             caption = message.caption if message.caption else ""
@@ -161,7 +148,7 @@ def handle_all(message):
                     f"👤 کاربر: {message.from_user.first_name}\n"
                     f"🆔 ID: {chat_id}\n"
                     f"📌 کپشن:\n{caption}"
-                ),
+                )
             )
 
         bot.send_message(chat_id, "پیامت ارسال شد ✅", reply_markup=main_menu())
@@ -181,13 +168,12 @@ def handle_all(message):
             f"👤 کاربر: {message.from_user.first_name}\n"
             f"🆔 ID: {chat_id}\n"
             f"📦 پلن: {plan}\n\n"
-            f"📝 اطلاعات:\n{message.text}",
+            f"📝 اطلاعات:\n{message.text}"
         )
 
         bot.send_message(chat_id, "✅ سفارش ثبت شد. منتظر پیام ادمین باشید.", reply_markup=main_menu())
         user_state.pop(chat_id, None)
         return
-
 
 print("Bot is running...")
 bot.infinity_polling()
